@@ -17,7 +17,14 @@ window.onload=function(){
         $(this).find('.aside-menu-list').stop().slideToggle();
         $(".xp").css("display","none");
         drawObj.isshowxp=false;
-        $(".selectarea").css("display","none");
+        $(".selectarea").css("border","none");
+    });
+
+//点击侧边栏清除橡皮和选择工具
+    $("aside li").on("click",function () {
+        $(".xp").css("display","none");
+        drawObj.isshowxp=false;
+        $(".selectarea").css("border","none");
     });
 
 // 创建画笔

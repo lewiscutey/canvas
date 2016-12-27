@@ -195,156 +195,156 @@
             return false;
         }
     },
-    select:function(selectareaobj){
-        var that=this;
-        that.copy.onmousedown=function(e){
-            var startx= e.offsetX;
-            var starty= e.offsetY;
-            var minx,miny,w,h;
-            that.init();
-            that.copy.onmousemove=function(e){
-                var endx= e.offsetX;
-                var endy= e.offsetY;
-                minx=startx>endx?endx:startx;
-                miny=starty>endy?endy:starty;
-                w=Math.abs(startx-endx);
-                h=Math.abs(starty-endy);
-                selectareaobj.css({
-                    left:minx,
-                    top:miny,
-                    width:w,
-                    height:h,
-                    display:"block"
-                });
-            };
-            that.copy.onmouseup=function(){
-                that.copy.onmouseup=null;
-                that.copy.onmousemove=null;
-                that.temp=that.ctx.getImageData(minx,miny,w,h);
-                that.ctx.clearRect(minx,miny,w,h);
-                that.history.push(that.ctx.getImageData(0,0,that.canvas.width,that.canvas.height));
-                that.ctx.putImageData(that.temp,minx,miny);
-                that.drag(minx,miny,w,h,selectareaobj);
-            };
-            return false;
-        }
-    },
-    drag:function(x,y,w,h,selectareaobj){
-        var that=this;
-        that.copy.onmousemove=function(e){
-            selectareaobj.css("cursor","move");
-        };
-        that.copy.onmousedown=function(e){
-            var ax= selectareaobj.position().left;
-            var ay= selectareaobj.position().top;
-            var ox= e.clientX;
-            var oy= e.clientY;
-            that.copy.onmousemove=function(e){
-                that.ctx.clearRect(0,0,that.canvas.width,that.canvas.height);
-                if(that.history.length!=0){
-                    that.ctx.putImageData(that.history[that.history.length-1],0,0);
-                }
-                var mx= e.clientX;
-                var my= e.clientY;
-                var lefts=(mx-ox)+ax;
-                var tops=(my-oy)+ay;
-                if(lefts<0){
-                    lefts=0;
-                }
-                if(lefts>that.canvas.widht-w){
-                    lefts=that.canvas.width-w;
-                }
-                if(tops<0){
-                    tops=0;
-                }
-                if(tops>that.canvas.height-h){
-                    tops=that.canvas.height-h;
-                }
-                selectareaobj.css({
-                    left:lefts,
-                    top:tops,
-                    border:"1px dotted #000"
-                });
-                x=lefts;
-                y=tops;
-                that.ctx.putImageData(that.temp,lefts,tops);
-            };
-            that.copy.onmouseup=function(){
-                that.copy.onmousemove=null;
-                that.copy.onmouseup=null;
-                that.drag(x,y,w,h,selectareaobj);
-                selectareaobj.css({
-                    // border:"none"
-                })
-            };
-            return false;
-        }
-    },
-    rp:function (dataobj,x,y) {
-        for(var i=0;i<dataobj.width*dataobj.height;i++){
-            dataobj.data[i*4+0] = 255-dataobj.data[i*4+0];
-            dataobj.data[i*4+1] = 255-dataobj.data[i*4+1];
-            dataobj.data[i*4+2] = 255-dataobj.data[i*4+2];
-            dataobj.data[i*4+3] = 255;
-        }
-        this.ctx.putImageData(dataobj,x,y);
-    }, 
-    mosaic:function (dataobj,num,x,y) {
-        var width = dataobj.width, height = dataobj.height;
-        var num = num;
-        var w = width / num;
-        var h = height / num;
-        for (var i = 0; i < num; i++) {
-            for (var j = 0; j < num; j++) {
-                var dataObj = this.ctx.getImageData(j * w, i * h, w, h);
-                var r = 0, g = 0, b = 0;
-                for (var k = 0; k < dataObj.width * dataObj.height; k++) {
-                    r += dataObj.data[k * 4 + 0];
-                    g += dataObj.data[k * 4 + 1];
-                    b += dataObj.data[k * 4 + 2];
-                }
-
-                r = parseInt(r / (dataObj.width * dataObj.height));
-                g = parseInt(g / (dataObj.width * dataObj.height));
-                b = parseInt(b / (dataObj.width * dataObj.height));
-
-                for (var k = 0; k < dataObj.width * dataObj.height; k++) {
-                    dataObj.data[k * 4 + 0] = r;
-                    dataObj.data[k * 4 + 1] = g;
-                    dataObj.data[k * 4 + 2] = b;
-                }
-                this.ctx.putImageData(dataObj, x + j * w, y+i * h);
-
+        select:function(selectareaobj){
+            var that=this;
+            that.copy.onmousedown=function(e){
+                var startx= e.offsetX;
+                var starty= e.offsetY;
+                var minx,miny,w,h;
+                that.init();
+                that.copy.onmousemove=function(e){
+                    var endx= e.offsetX;
+                    var endy= e.offsetY;
+                    minx=startx>endx?endx:startx;
+                    miny=starty>endy?endy:starty;
+                    w=Math.abs(startx-endx);
+                    h=Math.abs(starty-endy);
+                    selectareaobj.css({
+                        left:minx,
+                        top:miny,
+                        width:w,
+                        height:h,
+                        display:"block"
+                    });
+                };
+                that.copy.onmouseup=function(){
+                    that.copy.onmouseup=null;
+                    that.copy.onmousemove=null;
+                    that.temp=that.ctx.getImageData(minx,miny,w,h);
+                    that.ctx.clearRect(minx,miny,w,h);
+                    that.history.push(that.ctx.getImageData(0,0,that.canvas.width,that.canvas.height));
+                    that.ctx.putImageData(that.temp,minx,miny);
+                    that.drag(minx,miny,w,h,selectareaobj);
+                };
+                return false;
             }
-        }
-    },
-    blur:function (dataobj,num,x,y) {
-        var width = dataobj.width, height = dataobj.height;
-        var arr=[];
-        var num = num;
-        for (var i = 0; i < width; i++) {
-            for (var j = 0; j < height; j++) {
-                var x1=j+num>width?j-num:j;
-                var y1=i+num>height?i-num:i;
-                var dataObj = this.ctx.getImageData(x1, y1,num, num);
-                var r = 0, g = 0, b = 0;
-                for (var k = 0; k < dataObj.width * dataObj.height; k++) {
-                    r += dataObj.data[k * 4 + 0];
-                    g += dataObj.data[k * 4 + 1];
-                    b += dataObj.data[k * 4 + 2];
-                }
-                r = parseInt(r / (dataObj.width * dataObj.height));
-                g = parseInt(g / (dataObj.width * dataObj.height));
-                b = parseInt(b / (dataObj.width * dataObj.height));
-                arr.push(r,g,b,255);
+        },
+        drag:function(x,y,w,h,selectareaobj){
+            var that=this;
+            that.copy.onmousemove=function(e){
+                selectareaobj.css("cursor","move");
+            };
+            that.copy.onmousedown=function(e){
+                var ax= selectareaobj.position().left;
+                var ay= selectareaobj.position().top;
+                var ox= e.clientX;
+                var oy= e.clientY;
+                that.copy.onmousemove=function(e){
+                    that.ctx.clearRect(0,0,that.canvas.width,that.canvas.height);
+                    if(that.history.length!=0){
+                        that.ctx.putImageData(that.history[that.history.length-1],0,0);
+                    }
+                    var mx= e.clientX;
+                    var my= e.clientY;
+                    var lefts=(mx-ox)+ax;
+                    var tops=(my-oy)+ay;
+                    if(lefts<0){
+                        lefts=0;
+                    }
+                    if(lefts>that.canvas.widht-w){
+                        lefts=that.canvas.width-w;
+                    }
+                    if(tops<0){
+                        tops=0;
+                    }
+                    if(tops>that.canvas.height-h){
+                        tops=that.canvas.height-h;
+                    }
+                    selectareaobj.css({
+                        left:lefts,
+                        top:tops,
+                        border:"1px dotted #000"
+                    });
+                    x=lefts;
+                    y=tops;
+                    that.ctx.putImageData(that.temp,lefts,tops);
+                };
+                that.copy.onmouseup=function(){
+                    that.copy.onmousemove=null;
+                    that.copy.onmouseup=null;
+                    that.drag(x,y,w,h,selectareaobj);
+                    selectareaobj.css({
+                        // border:"none"
+                    })
+                };
+                return false;
             }
-        }
-        for(var i=0;i<dataobj.data.length;i++){
-            dataobj.data[i]=arr[i];
-        }
-        this.ctx.putImageData(dataobj,x,y);
+        },
+        rp:function (dataobj,x,y) {
+            for(var i=0;i<dataobj.width*dataobj.height;i++){
+                dataobj.data[i*4+0] = 255-dataobj.data[i*4+0];
+                dataobj.data[i*4+1] = 255-dataobj.data[i*4+1];
+                dataobj.data[i*4+2] = 255-dataobj.data[i*4+2];
+                dataobj.data[i*4+3] = 255;
+            }
+            this.ctx.putImageData(dataobj,x,y);
+        },
+        mosaic:function (dataobj,num,x,y) {
+            var width = dataobj.width, height = dataobj.height;
+            var num = num;
+            var w = width / num;
+            var h = height / num;
+            for (var i = 0; i < num; i++) {
+                for (var j = 0; j < num; j++) {
+                    var dataObj = this.ctx.getImageData(j * w, i * h, w, h);
+                    var r = 0, g = 0, b = 0;
+                    for (var k = 0; k < dataObj.width * dataObj.height; k++) {
+                        r += dataObj.data[k * 4 + 0];
+                        g += dataObj.data[k * 4 + 1];
+                        b += dataObj.data[k * 4 + 2];
+                    }
 
-    }
+                    r = parseInt(r / (dataObj.width * dataObj.height));
+                    g = parseInt(g / (dataObj.width * dataObj.height));
+                    b = parseInt(b / (dataObj.width * dataObj.height));
+
+                    for (var k = 0; k < dataObj.width * dataObj.height; k++) {
+                        dataObj.data[k * 4 + 0] = r;
+                        dataObj.data[k * 4 + 1] = g;
+                        dataObj.data[k * 4 + 2] = b;
+                    }
+                    this.ctx.putImageData(dataObj, x + j * w, y+i * h);
+
+                }
+            }
+        },
+        blur:function (dataobj,num,x,y) {
+            var width = dataobj.width, height = dataobj.height;
+            var arr=[];
+            var num = num;
+            for (var i = 0; i < width; i++) {
+                for (var j = 0; j < height; j++) {
+                    var x1=j+num>width?j-num:j;
+                    var y1=i+num>height?i-num:i;
+                    var dataObj = this.ctx.getImageData(x1, y1,num, num);
+                    var r = 0, g = 0, b = 0;
+                    for (var k = 0; k < dataObj.width * dataObj.height; k++) {
+                        r += dataObj.data[k * 4 + 0];
+                        g += dataObj.data[k * 4 + 1];
+                        b += dataObj.data[k * 4 + 2];
+                    }
+                    r = parseInt(r / (dataObj.width * dataObj.height));
+                    g = parseInt(g / (dataObj.width * dataObj.height));
+                    b = parseInt(b / (dataObj.width * dataObj.height));
+                    arr.push(r,g,b,255);
+                }
+            }
+            for(var i=0;i<dataobj.data.length;i++){
+                dataobj.data[i]=arr[i];
+            }
+            this.ctx.putImageData(dataobj,x,y);
+
+        }
 
     };
 
