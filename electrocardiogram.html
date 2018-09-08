@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <title>心电图</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+     <style>
+         html,body{
+             width: 100%;
+             height: 100%;
+             margin: 0;
+         }
+         canvas{
+             background: #000;
+             width: 100%;
+            height: 100%;
+         }
+     </style>
+ </head>
+ <body>
+ <div id="canvas">
+     <canvas id="can"></canvas>
+ </div>
+ <script>
+     var can = document.getElementById('can'),
+         pan,
+         index = 0,
+         flag = true,
+         wid = document.body.clientWidth,
+         hei = document.body.clientHeight,
+         x = 0,
+         y = hei/2,
+         drawX = 0, 
+         drawY = hei/2,
+         drawXY = [],
+         cDrawX = 0,
+         i = 0,
+         reX = 0,
+         reY = 0;
+     start();
+     function start(){
+         can.height = hei;
+         can.width  = wid;
+         pan = can.getContext("2d");
+         pan.strokeStyle = "white";
+         pan.lineJoin = "round";
+         pan.lineWidth = 6;
+         pan.shadowColor = "#228DFF";
+         pan.shadowOffsetX = 0;
+         pan.shadowOffsetY = 0;
+         pan.shadowBlur = 20;
+         pan.beginPath();
+         pan.moveTo(x,y);
+         drawXYS();
+         index = setInterval(move,1);
+     };
+
+     function drawXYS(){
+         if(drawX > wid){
+         }else{
+             if(drawY == hei/2){
+                 if(flag){
+                     flag = false;
+                 }else{
+                     var _y = Math.ceil(Math.random()*10);
+                     _y = _y/2;
+                     if(Number.isInteger(_y)){
+                         drawY += Math.random()*180+30;
+                     }else{
+                         drawY -= Math.random()*180+30;
+                     }
+                     flag = true;
+                 }
+                 cDrawX = Math.random()*40+15;
+             }else{
+                 drawY = hei/2;
+             }
+             drawX += cDrawX;
+             drawXY.push({
+                 x : drawX,
+                 y : drawY
+             });
+             drawXYS();
+         }
+     }
+
+     function move(){
+         var x = drawXY[i].x,
+             y = drawXY[i].y;
+         if(reX >= x - 1){
+             reX = x;
+             reY = y;
+             i++;
+             cc();
+             return;
+         }
+         if(y > hei/2){
+             if(reY >= y){
+                 reX = x;
+                 reY = y;
+                 i++;
+                 cc();
+                 return;
+             }
+         }else if(y < hei/2){
+             if(reY <= y){
+                 reX = x;
+                 reY = y;
+                 i++;
+                 cc();
+                 return;
+             }
+         }else{
+             reX = x;
+             reY = y;
+             i++;
+             cc();
+             return;
+         }
+
+         reX += 1;
+         if(y == hei/2){
+             reY = hei/2;
+         }else{
+             var c = Math.abs((drawXY[i].x-drawXY[i-1].x)/(drawXY[i].y-drawXY[i-1].y));
+             var _yt = (reX-drawXY[i-1].x)/c;
+
+             if(drawXY[i].y < drawXY[i-1].y){
+                 reY = drawXY[i-1].y - _yt;
+             }else{
+                 reY = drawXY[i-1].y + _yt;
+             }
+         }
+         cc();
+     }
+
+    function cc(){
+        if(i == drawXY.length){
+             pan.closePath();
+             clearInterval(index);
+             index = 0;
+             x = 0;
+             y = hei/2;
+             flag = true;
+             i = 0;
+         }else{
+             pan.lineTo(reX, reY);
+             pan.stroke();
+         }
+    }
+ 
+</script>
+</body>
+</html>
